@@ -53,8 +53,8 @@ app.post("/submitBooking", async (req, res) => {
         // Send the email
         let info = await transporter.sendMail({
             from: '"Rupayan Dirghangi" <send2rupayan2002@gmail.com>',
-            // to: 'starrymountain2024@gmail.com',
-            to: 'arr25105@gmail.com',
+            to: 'starrymountain2024@gmail.com',
+            // to: 'arr25105@gmail.com',
             subject: "Booking From " + booking.name,
             text: JSON.stringify(req.body, null, 2), // convert object to string
         });
