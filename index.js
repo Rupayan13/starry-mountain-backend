@@ -11,7 +11,7 @@ const Feedback = require('./model/feedback');
 const Contact = require('./model/contact');
 
 const app = express();
-const PORT = process.env.PORT;
+let PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware
