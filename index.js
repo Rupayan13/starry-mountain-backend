@@ -11,7 +11,8 @@ const Feedback = require('./model/feedback');
 const Contact = require('./model/contact');
 
 const app = express();
-const JWT_SECRET = "starrymountainsecretkey";
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware
 app.use(cors({
@@ -22,9 +23,12 @@ app.use(cors({
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect("mongodb+srv://send2rupayan2002_db_user:GqbDhd0cSiARwTQ1@starrymountain.dzjmht3.mongodb.net/?retryWrites=true&w=majority&appName=starrymountain")
-    .then(() => console.log("MongoDB connected"))
-    .catch(err => console.error("Connection error:", err));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.error("Connection error:", err));
 
 
 // Routes
