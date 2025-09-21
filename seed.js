@@ -4,7 +4,7 @@ const Admin = require("./model/admin");
 
 const register = async () => {
     try {
-        mongoose.connect("mongodb+srv://send2rupayan2002_db_user:GqbDhd0cSiARwTQ1@starrymountain.dzjmht3.mongodb.net/?retryWrites=true&w=majority&appName=starrymountain")
+        mongoose.connect(process.env.MONGO_URI)
             .then(() => console.log("MongoDB connected"))
             .catch(err => console.error("Connection error:", err));
         const hashedPassword = await bcrypt.hash("admin", 10);
