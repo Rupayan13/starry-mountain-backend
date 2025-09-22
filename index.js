@@ -38,40 +38,55 @@ app.post("/submitBooking", async (req, res) => {
     try {
         // Save the booking to the database
         const booking = await Booking.create(req.body);
-        // res.status(200).json(booking);
 
-        // Set up the transporter
+        // Setup transporter
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 587,
+            secure: false,
             auth: {
                 user: 'send2rupayan2002@gmail.com',
                 pass: 'wzpomlwnhyopsrpp'
             }
         });
 
-        // Send the email
-        let info = await transporter.sendMail({
+        // 1. Send booking details to admin
+        let adminMail = await transporter.sendMail({
             from: '"Rupayan Dirghangi" <send2rupayan2002@gmail.com>',
-            to: 'starrymountain2024@gmail.com',
-            // to: 'arr25105@gmail.com',
-            subject: "Booking From " + booking.name,
-            text: JSON.stringify(req.body, null, 2), // convert object to string
+            to: 'send2rupayan2002@gmail.com',
+            subject: "New Booking From " + booking.name,
+            text: JSON.stringify(req.body, null, 2),
         });
 
-        console.log("Message sent: %s", info.messageId);
+        console.log("Admin mail sent: %s", adminMail.messageId);
 
-        // Send one response back
+        let userMail = null;
+
+        // 2. Send welcome email ONLY if user provided an email
+        if (booking.email) {
+            userMail = await transporter.sendMail({
+                from: '"Starry Mountain" <send2rupayan2002@gmail.com>',
+                to: booking.email, // only send if exists
+                subject: "Welcome to Starry Mountain 🌄",
+                text: `Hello ${booking.name || "Guest"},\n\nThanks for reaching out! A member of our team will get back to you shortly. In the meantime, if you need anything else, feel free to let us know. You can also contact us directly for any urgent queries.\n\nBest regards,\nStarry Mountain Team\n+917003328637\n+9198312 37696`,
+            });
+
+            console.log("User welcome mail sent: %s", userMail.messageId);
+        }
+
+        // Send response back
         res.status(200).json({
             booking,
-            messageId: info.messageId
+            adminMessageId: adminMail.messageId,
+            userMessageId: userMail ? userMail.messageId : null
         });
 
     } catch (err) {
-        console.error("Error saving booking:", err);
+        console.error("Error saving booking or sending mail:", err);
         res.status(500).json({ error: err.message });
     }
 });
+
 
 app.get("/getBookings", async (req, res) => {
     try {
