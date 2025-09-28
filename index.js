@@ -96,19 +96,18 @@ app.post("/submitBooking", async (req, res) => {
         }
 
         console.log("User welcome mail sent: %s", userMail.messageId);
-    }
 
         // Send response back
         res.status(200).json({
-        booking,
-        adminMessageId: adminMail.messageId,
-        userMessageId: userMail ? userMail.messageId : null
-    });
-
-} catch (err) {
-    console.error("Error saving booking or sending mail:", err);
-    res.status(500).json({ error: err.message });
-}
+            booking,
+            // adminMail and userMail are not defined because we use apiInstance, so remove these or set to null
+            adminMessageId: null,
+            userMessageId: null
+        });
+    } catch (err) {
+        console.error("Error saving booking or sending mail:", err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 
