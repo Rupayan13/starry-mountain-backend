@@ -38,7 +38,7 @@ mongoose.connect(process.env.MONGO_URI, {
 let apiInstance = new brevo.TransactionalEmailsApi();
 apiInstance.setApiKey(
     brevo.TransactionalEmailsApiApiKeys.apiKey,
-    ZyAzFXnrDjkS15Qb  // set this in Render env vars
+    process.env.BREVO_API_KEY  // set this in Render env vars
 );
 app.post("/submitBooking", async (req, res) => {
     try {
