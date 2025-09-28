@@ -41,14 +41,6 @@ apiInstance.setApiKey(
     process.env.BREVO_API_KEY  // set this in Render env vars
 );
 
-(async () => {
-  try {
-    const result = await apiInstance.getAccount(); // test call
-    console.log("Brevo API works:", result);
-  } catch (err) {
-    console.error("Brevo API key error:", err);
-  }
-})();
 // app.post("/submitBooking", async (req, res) => {
 //     try {
 //         // Save the booking to the database
