@@ -9,7 +9,6 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const Feedback = require('./model/feedback');
 const Contact = require('./model/contact');
-const brevo = require("@getbrevo/brevo");
 
 const app = express();
 let PORT = process.env.PORT || 3000;
@@ -35,109 +34,61 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 
 // --- Bookings ---
-let apiInstance = new brevo.TransactionalEmailsApi();
-apiInstance.setApiKey(
-    brevo.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY  // set this in Render env vars
-);
-
-// app.post("/submitBooking", async (req, res) => {
-//     try {
-//         // Save the booking to the database
-//         const booking = await Booking.create(req.body);
-
-//         // // Setup transporter
-//         // const transporter = nodemailer.createTransport({
-//         //     host: 'smtp-relay.brevo.com',
-//         //     port: 587,
-//         //     secure: false,
-//         //     auth: {
-//         //         user: '9807a2001@smtp-brevo.com',
-//         //         pass: 'ZyAzFXnrDjkS15Qb'
-//         //     }
-//         // });
-
-//         // // 1. Send booking details to admin
-//         // let adminMail = await transporter.sendMail({
-//         //     from: '"Rupayan Dirghangi" <9807a2001@smtp-brevo.com>',
-//         //     to: 'send2rupayan2002@gmail.com',
-//         //     subject: "New Booking From " + booking.name,
-//         //     text: JSON.stringify(req.body, null, 2),
-//         // });
-
-//         // console.log("Admin mail sent: %s", adminMail.messageId);
-
-//         // let userMail = null;
-
-//         // // 2. Send welcome email ONLY if user provided an email
-//         // if (booking.email) {
-//         //     userMail = await transporter.sendMail({
-//         //         from: '"Starry Mountain" <9807a2001@smtp-brevo.com>',
-//         //         to: booking.email, // only send if exists
-//         //         subject: "Welcome to Starry Mountain 🌄",
-//         //         text: `Hello ${booking.name || "Guest"},\n\nThanks for reaching out! A member of our team will get back to you shortly. In the meantime, if you need anything else, feel free to let us know. You can also contact us directly for any urgent queries.\n\nBest regards,\nStarry Mountain Team\n+917003328637\n+9198312 37696`,
-//         //     });
-
-//         // Send email to admin
-//         await apiInstance.sendTransacEmail({
-//             sender: { email: "9807a2001@smtp-brevo.com", name: "Starry Mountain" },
-//             to: [{ email: "send2rupayan2002@gmail.com" }],
-//             subject: "New Booking from " + booking.name,
-//             textContent: JSON.stringify(req.body, null, 2),
-//         });
-
-//         // Send welcome email to user if email is provided
-//         if (booking.email) {
-//             await apiInstance.sendTransacEmail({
-//                 sender: { email: "9807a2001@smtp-brevo.com", name: "Starry Mountain" },
-//                 to: [{ email: booking.email }],
-//                 subject: "Welcome to Starry Mountain 🌄",
-//                 textContent: `Hello ${booking.name || "Guest"},\n\nThanks for booking with us!`,
-//             });
-//         }
-
-//         console.log("User welcome mail sent: %s", userMail.messageId);
-
-//         // Send response back
-//         res.status(200).json({
-//             booking,
-//             // adminMail and userMail are not defined because we use apiInstance, so remove these or set to null
-//             adminMessageId: null,
-//             userMessageId: null
-//         });
-//     } catch (err) {
-//         console.error("Error saving booking or sending mail:", err);
-//         res.status(500).json({ error: err.message });
-//     }
-// });
 
 app.post("/submitBooking", async (req, res) => {
-  try {
-    const booking = await Booking.create(req.body);
+    try {
+        // Save the booking to the database
+        const booking = await Booking.create(req.body);
 
-    // Send email to admin
-    await apiInstance.sendTransacEmail({
-      sender: { email: "9807a2001@smtp-brevo.com", name: "Starry Mountain" },
-      to: [{ email: "send2rupayan2002@gmail.com" }],
-      subject: "New Booking from " + booking.name,
-      textContent: JSON.stringify(req.body, null, 2),
-    });
+        // Setup transporter
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: 'send2rupayan2002@gmail.com',
+                pass: 'fegpkykrsaqjqyjk'
+            }
+        });
 
-    // Send welcome email to user if email exists
-    if (booking.email) {
-      await apiInstance.sendTransacEmail({
-        sender: { email: "9807a2001@smtp-brevo.com", name: "Starry Mountain" },
-        to: [{ email: booking.email }],
-        subject: "Welcome to Starry Mountain 🌄",
-        textContent: `Hello ${booking.name || "Guest"},\n\nThanks for booking with us!`,
-      });
+        // 1. Send booking details to admin
+        let adminMail = await transporter.sendMail({
+            from: '"Rupayan Dirghangi" <send2rupayan2002@gmail.com>',
+            to: 'send2rupayan2002@gmail.com',
+            subject: "New Booking From " + booking.name,
+            text: JSON.stringify(req.body, null, 2),
+        });
+
+        console.log("Admin mail sent: %s", adminMail.messageId);
+
+        let userMail = null;
+
+        // 2. Send welcome email ONLY if user provided an email
+        if (booking.email) {
+            userMail = await transporter.sendMail({
+                from: '"Starry Mountain" <send2rupayan2002@gmail.com>',
+                to: booking.email, // only send if exists
+                subject: "Welcome to Starry Mountain 🌄",
+                text: `Hello ${booking.name || "Guest"},\n\nThanks for reaching out! A member of our team will get back to you shortly. In the meantime, if you need anything else, feel free to let us know. You can also contact us directly for any urgent queries.\n\nBest regards,\nStarry Mountain Team\n+917003328637\n+9198312 37696`,
+            });
+        }
+
+        if (userMail) {
+            console.log("User welcome mail sent: %s", userMail.messageId);
+        }
+
+
+        // Send response back
+        res.status(200).json({
+            booking,
+            adminMessageId: adminMail.messageId,
+            userMessageId: userMail ? userMail.messageId : null
+        });
+
+    } catch (err) {
+        console.error("Error saving booking or sending mail:", err);
+        res.status(500).json({ error: err.message });
     }
-
-    res.status(200).json({ booking, message: "Emails sent successfully" });
-  } catch (err) {
-    console.error("Error saving booking or sending mail:", err);
-    res.status(500).json({ error: err.message });
-  }
 });
 
 
