@@ -43,8 +43,8 @@ app.post("/submitBooking", async (req, res) => {
         // Setup transporter
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
+            port: 465,
+            secure: true,
             auth: {
                 user: 'send2rupayan2002@gmail.com',
                 pass: 'fegpkykrsaqjqyjk'
