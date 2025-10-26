@@ -173,6 +173,17 @@ app.get("/getFeedbacks", async (req, res) => {
     }
 });
 
+app.get("/getFeedbacks/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const feedback = await Feedback.findById(id);
+        res.status(200).json(feedback);
+    } catch (err) {
+        console.error("Error fetching feedback:", err);
+        res.status(500).json(err);
+    }
+});
+
 app.put("/approveFeedback/:id", async (req, res) => {
     const id = req.params.id;
     try {
