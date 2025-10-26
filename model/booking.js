@@ -8,6 +8,7 @@ const bookingSchema = new mongoose.Schema({
     checkout: {type: Date, required: true},
     adults: {type: Number, required: true},
     children: {type: Number, required: true},
+    rooms: {type: Number, required: true},
     duration: {type: String, required: true},
     requests: {type: String}
 });
