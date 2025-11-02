@@ -45,71 +45,13 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // --- Bookings ---
 
-// app.post("/submitBooking", async (req, res) => {
-//     try {
-//         // Save the booking to the database
-//         const booking = await Booking.create(req.body);
-
-//         // Setup transporter
-//         // const transporter = nodemailer.createTransport({
-//         //     host: 'smtp.gmail.com',
-//         //     port: 465,
-//         //     secure: true,
-//         //     auth: {
-//         //         user: 'send2rupayan2002@gmail.com',
-//         //         pass: 'fegpkykrsaqjqyjk'
-//         //     }
-//         // });
-
-//         // // 1. Send booking details to admin
-//         // let adminMail = await transporter.sendMail({
-//         //     from: '"Rupayan Dirghangi" <send2rupayan2002@gmail.com>',
-//         //     to: 'send2rupayan2002@gmail.com',
-//         //     subject: "New Booking From " + booking.name,
-//         //     text: JSON.stringify(req.body, null, 2),
-//         // });
-
-//         // console.log("Admin mail sent: %s", adminMail.messageId);
-
-//         // let userMail = null;
-
-//         // // 2. Send welcome email ONLY if user provided an email
-//         // if (booking.email) {
-//         //     userMail = await transporter.sendMail({
-//         //         from: '"Starry Mountain" <send2rupayan2002@gmail.com>',
-//         //         to: booking.email, // only send if exists
-//         //         subject: "Welcome to Starry Mountain 🌄",
-//         //         text: `Hello ${booking.name || "Guest"},\n\nThanks for reaching out! A member of our team will get back to you shortly. In the meantime, if you need anything else, feel free to let us know. You can also contact us directly for any urgent queries.\n\nBest regards,\nStarry Mountain Team\n+917003328637\n+9198312 37696`,
-//         //     });
-//         // }
-
-//         // if (userMail) {
-//         //     console.log("User welcome mail sent: %s", userMail.messageId);
-//         // }
-
-
-//         // // Send response back
-//         // res.status(200).json({
-//         //     booking,
-//         //     adminMessageId: adminMail.messageId,
-//         //     userMessageId: userMail ? userMail.messageId : null
-//         // });
-
-//         res.status(200).json({ booking });
-
-//     } catch (err) {
-//         console.error("Error saving booking or sending mail:", err);
-//         res.status(500).json({ error: err.message });
-//     }
-// });
-
 app.post("/submitBooking", async (req, res) => {
     try {
         const booking = await Booking.create(req.body);
 
         await resend.emails.send({
             from: "Starry Mountain <booking@starrymountain.in>",
-            to: 'send2rupayan2002@gmail.com',
+            to: 'starrymountain2024@gmail.com',
             subject: `New Booking From ${booking.name}`,
             text: JSON.stringify(req.body, null, 2)
         });
