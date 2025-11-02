@@ -15,9 +15,8 @@ const { Resend } = require('resend');
 const app = express();
 let PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
-const resend = new Resend(process.env.RESEND_API_KEY, {
-  region: "ap-northeast-1"
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 
 // Middleware
@@ -127,8 +126,8 @@ app.post("/submitBooking", async (req, res) => {
         return res.status(200).json({ booking });
 
     } catch (err) {
-        console.error("Error saving booking or sending mail:", err);
-        return res.status(500).json({ error: err.message });
+        console.log("MAIL ERROR:", JSON.stringify(err, null, 2));
+        return res.status(500).json({ error: err });
     }
 });
 
