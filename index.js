@@ -15,7 +15,10 @@ const { Resend } = require('resend');
 const app = express();
 let PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY, {
+  region: "ap-northeast-1"
+});
+
 
 // Middleware
 app.use(cors({
