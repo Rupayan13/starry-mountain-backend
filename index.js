@@ -109,7 +109,7 @@ app.post("/submitBooking", async (req, res) => {
         const booking = await Booking.create(req.body);
 
         await resend.emails.send({
-            from: 'Starry Mountain <booking@send.starrymountain.in>',
+            from: "Starry Mountain <booking@starrymountain.in>",
             to: 'send2rupayan2002@gmail.com',
             subject: `New Booking From ${booking.name}`,
             text: JSON.stringify(req.body, null, 2)
@@ -117,7 +117,7 @@ app.post("/submitBooking", async (req, res) => {
 
         if (booking.email) {
             await resend.emails.send({
-                from: 'Starry Mountain <booking@send.starrymountain.in>',
+                from: "Starry Mountain <booking@starrymountain.in>",
                 to: booking.email,
                 subject: "Welcome to Starry Mountain",
                 text: `Hello ${booking.name || "Guest"},\n\nThanks for reaching out! A member of our team will get back to you shortly. In the meantime, if you need anything else, feel free to let us know. You can also contact us directly for any urgent queries.\n\nBest regards,\nStarry Mountain Team\n+917003328637\n+9198312 37696`,
