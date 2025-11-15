@@ -237,6 +237,89 @@ app.delete("/deleteContact/:id", (req, res) => {
         .catch(err => res.json(err));
 });
 
+// --- Admin Forgot Password ---
+app.post("/adminForgotPassword", async (req, res) => {
+    try {
+        const admin = await Admin.findOne({ username: "admin" });
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        admin.otp = otp;
+        admin.otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
+        await admin.save();
+
+        await resend.emails.send({
+            from: "Starry Mountain <booking@starrymountain.in>",
+            to: "send2rupayan2002@gmail.com",
+            subject: "Admin Password Reset OTP",
+            text: `Your OTP for resetting admin password is: ${otp}. It expires in 5 minutes.`
+        });
+
+        res.status(200).json({ message: "OTP sent to admin email" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+app.post("/adminVerifyOtp", async (req, res) => {
+    try {
+        const { otp } = req.body;
+
+        const admin = await Admin.findOne({ username: "admin" });
+
+        if (!admin || admin.otp !== otp) {
+            return res.status(401).json({ message: "Invalid OTP" });
+        }
+
+        if (admin.otpExpires < Date.now()) {
+            return res.status(400).json({ message: "OTP expired" });
+        }
+
+        return res.status(200).json({ message: "OTP verified successfully" });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+
+app.post("/adminResetPassword", async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body;
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+
+        const admin = await Admin.findOne({ username: "admin" });
+
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        // Encrypt password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        admin.password = hashedPassword;
+        admin.otp = null;            // clear OTP
+        admin.otpExpires = null;     // clear expiry
+
+        await admin.save();
+
+        res.status(200).json({ message: "Password updated successfully" });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
 // --- Start server ---
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
