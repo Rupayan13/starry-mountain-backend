@@ -254,7 +254,7 @@ app.post("/adminForgotPassword", async (req, res) => {
 
         await resend.emails.send({
             from: "Starry Mountain <booking@starrymountain.in>",
-            to: "send2rupayan2002@gmail.com",
+            to: "starrymountain2024@gmail.com",
             subject: "Admin Password Reset OTP",
             text: `Your OTP for resetting admin password is: ${otp}. It expires in 5 minutes.`
         });
